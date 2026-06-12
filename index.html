@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ジャンルや読者ターゲットを入力するだけで、note・ブログ・SNS向けの記事タイトル案を10個作成できる無料のブラウザツールです。">
+  <meta name="theme-color" content="#6c5ce7">
+  <title>記事タイトル作成ジェネレーター</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-shape shape-one" aria-hidden="true"></div>
+  <div class="background-shape shape-two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="記事タイトル作成ジェネレーター トップ">
+      <span class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img"><path d="M12 2 14.15 8.85 21 11l-6.85 2.15L12 20l-2.15-6.85L3 11l6.85-2.15L12 2Z"/><path d="m19 2 .72 2.28L22 5l-2.28.72L19 8l-.72-2.28L16 5l2.28-.72L19 2Z"/></svg>
+      </span>
+      <span>Title<span class="brand-accent">Craft</span></span>
+    </a>
+    <span class="local-badge"><span class="status-dot"></span>ブラウザ完結</span>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div class="eyebrow"><span>✦</span> WRITING ASSISTANT</div>
+      <h1 id="page-title">読まれる記事タイトルを、<br><span>わずか10秒で。</span></h1>
+      <p>テーマを入力するだけで、note・ブログ・SNSに使える<br class="desktop-only">魅力的なタイトル案を10個まとめて提案します。</p>
+      <div class="trust-list" aria-label="ツールの特徴">
+        <span>✓ 登録不要</span><span>✓ 完全無料</span><span>✓ データ送信なし</span>
+      </div>
+    </section>
+
+    <div class="tool-layout">
+      <section class="generator-card" aria-labelledby="form-title">
+        <div class="card-heading">
+          <span class="step-number">01</span>
+          <div><h2 id="form-title">記事の情報を入力</h2><p>わかる範囲で具体的に入力すると、精度が上がります。</p></div>
+        </div>
+
+        <form id="title-form" novalidate>
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="genre">ジャンル <span class="required">必須</span></label>
+              <div class="input-wrap">
+                <span class="input-icon" aria-hidden="true">▦</span>
+                <input id="genre" name="genre" type="text" placeholder="例：副業、料理、子育て" maxlength="30" required>
+              </div>
+              <span class="error-message" id="genre-error"></span>
+            </div>
+
+            <div class="field-group">
+              <label for="target">読者ターゲット <span class="required">必須</span></label>
+              <div class="input-wrap">
+                <span class="input-icon" aria-hidden="true">◎</span>
+                <input id="target" name="target" type="text" placeholder="例：副業を始めたい会社員" maxlength="50" required>
+              </div>
+              <span class="error-message" id="target-error"></span>
+            </div>
+          </div>
+
+          <div class="field-group full-width">
+            <label for="theme">記事テーマ <span class="required">必須</span></label>
+            <div class="input-wrap textarea-wrap">
+              <span class="input-icon" aria-hidden="true">✎</span>
+              <textarea id="theme" name="theme" rows="3" placeholder="例：未経験からWebライターで月5万円を稼ぐ方法" maxlength="100" required></textarea>
+              <span class="character-count"><span id="theme-count">0</span>/100</span>
+            </div>
+            <span class="error-message" id="theme-error"></span>
+          </div>
+
+          <fieldset class="tone-fieldset">
+            <legend>雰囲気 <span class="optional">1つ選択</span></legend>
+            <div class="tone-options">
+              <label class="tone-option"><input type="radio" name="tone" value="やさしい" checked><span><b>☘</b> やさしい</span></label>
+              <label class="tone-option"><input type="radio" name="tone" value="専門的"><span><b>⌘</b> 専門的</span></label>
+              <label class="tone-option"><input type="radio" name="tone" value="煽り気味"><span><b>⚡</b> 煽り気味</span></label>
+              <label class="tone-option"><input type="radio" name="tone" value="上品"><span><b>♢</b> 上品</span></label>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="button" class="sample-button" id="sample-button">入力例をセット</button>
+            <button type="submit" class="generate-button" id="generate-button">
+              <span class="button-icon">✦</span><span>タイトル案を10個つくる</span><span class="arrow">→</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <section class="results-card" id="results-section" aria-labelledby="results-title" aria-live="polite">
+        <div class="results-empty" id="results-empty">
+          <div class="empty-illustration" aria-hidden="true">
+            <span class="paper paper-back"></span><span class="paper paper-front">Aa<span></span><span></span><span></span></span><i>✦</i>
+          </div>
+          <h2>タイトル案がここに表示されます</h2>
+          <p>左のフォームに記事情報を入力して、<br>「タイトル案をつくる」を押してください。</p>
+          <div class="hint-box"><span>💡</span><p><b>入力のコツ</b><br>数字や具体的な悩みを入れると、より魅力的なタイトルになります。</p></div>
+        </div>
+
+        <div class="results-content" id="results-content" hidden>
+          <div class="results-header">
+            <div><span class="step-number">02</span><div><h2 id="results-title">タイトル案</h2><p><span id="result-count">10</span>個のアイデアを作成しました</p></div></div>
+            <button type="button" class="copy-all-button" id="copy-all-button"><span>▣</span> すべてコピー</button>
+          </div>
+          <ol class="title-list" id="title-list"></ol>
+          <div class="results-footer">
+            <p>気になる案を自由にアレンジしてお使いください。</p>
+            <button type="button" class="regenerate-button" id="regenerate-button">↻ もう一度つくる</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <section class="features" aria-label="主な特徴">
+      <article><span class="feature-icon purple">✦</span><div><h3>10案を一括生成</h3><p>切り口の異なる案をまとめて比較</p></div></article>
+      <article><span class="feature-icon orange">⚡</span><div><h3>すぐに使える</h3><p>会員登録もインストールも不要</p></div></article>
+      <article><span class="feature-icon green">♙</span><div><h3>プライバシー安心</h3><p>入力内容は外部へ送信されません</p></div></article>
+    </section>
+  </main>
+
+  <footer><p>あなたの発信が、もっと多くの人に届きますように。</p><p class="copyright">© 2026 TitleCraft</p></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"><span>✓</span><span id="toast-message">コピーしました</span></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
