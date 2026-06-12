@@ -14,9 +14,14 @@ const regenerateButton = document.getElementById('regenerate-button');
 const sampleButton = document.getElementById('sample-button');
 const toast = document.getElementById('toast');
 const toastMessage = document.getElementById('toast-message');
+const resultCount = document.getElementById('result-count');
+const currentYear = document.getElementById('current-year');
 
 let currentTitles = [];
 let toastTimer;
+let patternOffset = 0;
+
+currentYear.textContent = new Date().getFullYear();
 
 const titlePatterns = {
   'やさしい': [
@@ -46,7 +51,7 @@ const titlePatterns = {
   '煽り気味': [
     ({ theme }) => `まだ知らないの？${theme}で差がつく決定的な理由`,
     ({ target, theme }) => `${target}必見！今すぐ${theme}を始めるべき5つの理由`,
-    ({ genre }) => `知らないと損する${genre}の新常識【2026年版】`,
+    ({ genre }) => `知らないと損する${genre}の新常識【保存版】`,
     ({ theme }) => `9割が間違えている「${theme}」の本当のやり方`,
     ({ target, theme }) => `${target}の悩みが激変！${theme}の最強メソッド`,
     ({ theme }) => `もう遠回りしない。${theme}で結果を出す最短ルート`,
@@ -109,10 +114,11 @@ function generateTitles() {
   };
   const tone = form.elements.tone.value;
   const patterns = titlePatterns[tone];
-  const offset = currentTitles.length ? Math.floor(Math.random() * patterns.length) : 0;
-  currentTitles = patterns.map((_, index) => patterns[(index + offset) % patterns.length](data));
+  patternOffset = currentTitles.length ? (patternOffset + 1) % patterns.length : 0;
+  currentTitles = patterns.map((_, index) => patterns[(index + patternOffset) % patterns.length](data));
 
   renderTitles();
+  resultCount.textContent = currentTitles.length;
   resultsEmpty.hidden = true;
   resultsContent.hidden = false;
 
@@ -137,7 +143,7 @@ function renderTitles() {
     copyButton.className = 'item-copy';
     copyButton.setAttribute('aria-label', `タイトル案${index + 1}をコピー`);
     copyButton.title = 'コピー';
-    copyButton.textContent = '▣';
+    copyButton.textContent = 'コピー';
     copyButton.addEventListener('click', () => copyText(title, `タイトル案${index + 1}をコピーしました`));
 
     item.append(text, copyButton);
@@ -156,8 +162,9 @@ async function copyText(text, message) {
       textArea.style.opacity = '0';
       document.body.appendChild(textArea);
       textArea.select();
-      document.execCommand('copy');
+      const copied = document.execCommand('copy');
       textArea.remove();
+      if (!copied) throw new Error('Copy command failed');
     }
     showToast(message);
   } catch (error) {
@@ -197,6 +204,7 @@ sampleButton.addEventListener('click', () => {
   document.querySelector('input[name="tone"][value="やさしい"]').checked = true;
   [genreInput, targetInput, themeInput].forEach((input) => {
     input.classList.remove('invalid');
+    input.removeAttribute('aria-invalid');
     document.getElementById(`${input.id}-error`).textContent = '';
   });
   showToast('入力例をセットしました');
