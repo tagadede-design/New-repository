@@ -6,7 +6,230 @@
   <meta name="description" content="ジャンル・読者・テーマから、note・ブログ・SNS向けの記事タイトル案を10個作成するローカルツールです。">
   <meta name="theme-color" content="#5b4ae8">
   <title>TitleCraft｜記事タイトル作成ジェネレーター</title>
-  <link rel="stylesheet" href="./style.css">
+  <style>
+    :root {
+      --primary: #5b4ae8;
+      --primary-dark: #4938ca;
+      --primary-soft: #efedff;
+      --text: #242238;
+      --muted: #6f6c7f;
+      --border: #e3e1eb;
+      --surface: #ffffff;
+      --background: #f6f5fa;
+      --success: #16875f;
+      --danger: #c93752;
+      --shadow: 0 18px 45px rgba(45, 39, 82, 0.09);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      min-width: 320px;
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      background: var(--background);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid rgba(91, 74, 232, 0.22); outline-offset: 2px; }
+
+    .site-header,
+    main {
+      width: min(1120px, calc(100% - 40px));
+      margin-inline: auto;
+    }
+    .site-header {
+      min-height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .brand > span:last-child > span { color: var(--primary); }
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--primary);
+      border-radius: 10px;
+      font-family: Georgia, serif;
+      font-size: 21px;
+      box-shadow: 0 7px 16px rgba(91, 74, 232, 0.22);
+    }
+    .local-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      color: #555263;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .local-badge span { width: 8px; height: 8px; background: #2fb47c; border-radius: 50%; box-shadow: 0 0 0 3px #dff5eb; }
+
+    .hero { padding: 70px 20px 54px; text-align: center; }
+    .eyebrow { margin: 0 0 15px; color: var(--primary); font-size: 12px; font-weight: 800; letter-spacing: 0.16em; }
+    .hero h1 { margin: 0; font-size: clamp(36px, 5vw, 58px); line-height: 1.3; letter-spacing: -0.055em; }
+    .hero h1 strong { color: var(--primary); font-weight: 800; }
+    .hero-description { margin: 20px 0 17px; color: var(--muted); font-size: 15px; }
+    .trust-list { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px 22px; padding: 0; margin: 0; color: #777484; list-style: none; font-size: 12px; font-weight: 700; }
+    .trust-list span { color: var(--success); }
+
+    .tool-layout { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(390px, 0.92fr); gap: 22px; align-items: stretch; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); }
+    .generator-card { padding: 30px; }
+    .section-heading { display: flex; align-items: flex-start; gap: 13px; }
+    .section-heading h2 { margin: 0; font-size: 18px; line-height: 1.4; letter-spacing: -0.02em; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .step-number { flex: 0 0 auto; min-width: 36px; padding: 6px 7px; color: var(--primary); background: var(--primary-soft); border-radius: 8px; text-align: center; font-size: 11px; font-weight: 800; }
+
+    form { margin-top: 27px; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field-group { min-width: 0; }
+    .field-group label, .tone-fieldset legend { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 800; }
+    .required { margin-left: 5px; color: var(--primary); font-size: 10px; }
+    input, textarea {
+      width: 100%;
+      color: var(--text);
+      background: #fbfbfd;
+      border: 1px solid #dcd9e5;
+      border-radius: 10px;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    input { height: 47px; padding: 0 13px; }
+    textarea { min-height: 86px; padding: 11px 55px 22px 13px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: #aaa7b4; }
+    input:hover, textarea:hover { border-color: #c8c3da; }
+    input:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91, 74, 232, 0.09); outline: none; }
+    [hidden] { display: none !important; }
+
+    .form-error-summary { margin-bottom: 14px; padding: 10px 12px; color: var(--danger); background: #fff4f4; border: 1px solid #f1b8b8; border-radius: 8px; font-size: 12px; font-weight: 700; }
+
+    input.invalid, textarea.invalid { border-color: var(--danger); }
+    .theme-field { margin-top: 17px; }
+    .textarea-wrap { position: relative; }
+    .character-count { position: absolute; right: 12px; bottom: 9px; color: #9a97a6; font-size: 10px; }
+    .error-message { display: block; min-height: 18px; padding-top: 3px; color: var(--danger); font-size: 10px; }
+
+    .tone-fieldset { padding: 0; margin: 13px 0 0; border: 0; }
+    .tone-fieldset legend span { margin-left: 5px; color: var(--muted); font-size: 10px; font-weight: 500; }
+    .tone-options { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .tone-option { cursor: pointer; }
+    .tone-option input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .tone-option span { min-height: 43px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #666374; background: #fbfbfd; border: 1px solid var(--border); border-radius: 9px; font-size: 11px; font-weight: 700; transition: 0.2s; }
+    .tone-option b { color: #9995a7; font-size: 14px; }
+    .tone-option input:checked + span { color: var(--primary); background: var(--primary-soft); border-color: #b9b1f8; box-shadow: inset 0 0 0 1px #b9b1f8; }
+    .tone-option input:checked + span b { color: var(--primary); }
+    .tone-option input:focus-visible + span { outline: 3px solid rgba(91, 74, 232, 0.22); outline-offset: 2px; }
+    .form-actions { display: flex; align-items: center; gap: 11px; margin-top: 25px; }
+    .secondary-button, .primary-button { min-height: 48px; border-radius: 10px; font-size: 12px; font-weight: 800; }
+    .secondary-button { flex: 0 0 auto; padding: 0 17px; color: #666374; background: #fff; border: 1px solid var(--border); }
+    .secondary-button:hover { color: var(--primary); border-color: #bcb5ee; }
+    .primary-button { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 18px; color: #fff; background: var(--primary); border: 0; box-shadow: 0 9px 20px rgba(91, 74, 232, 0.22); }
+    .primary-button:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .primary-button span:last-child { margin-left: auto; }
+
+    .results-card { min-height: 590px; overflow: hidden; }
+    .results-empty { height: 100%; min-height: 590px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 35px; text-align: center; }
+    .empty-icon { width: 86px; height: 102px; padding: 17px 14px; margin-bottom: 22px; color: var(--primary); background: #fff; border: 1px solid #dcd8ea; border-radius: 12px; box-shadow: 0 12px 28px rgba(45, 39, 82, 0.12); transform: rotate(-2deg); text-align: left; }
+    .empty-icon span { display: block; margin-bottom: 13px; font-family: Georgia, serif; font-size: 20px; font-weight: 700; }
+    .empty-icon i { display: block; height: 4px; margin-top: 7px; background: #e9e6f2; border-radius: 3px; }
+    .empty-icon i:last-child { width: 65%; }
+    .results-empty h2 { margin: 0 0 7px; font-size: 16px; }
+    .results-empty > p { max-width: 340px; margin: 0; color: var(--muted); font-size: 12px; }
+    .hint-box { width: min(340px, 100%); display: flex; align-items: flex-start; gap: 11px; margin-top: 24px; padding: 13px; text-align: left; background: #f8f7fc; border: 1px solid var(--border); border-radius: 10px; }
+    .hint-box > span { flex: 0 0 auto; padding: 3px 6px; color: var(--primary); background: var(--primary-soft); border-radius: 5px; font-size: 9px; font-weight: 900; }
+    .hint-box p { margin: 0; color: #777484; font-size: 10px; }
+    .hint-box strong { display: block; margin-bottom: 2px; color: #555262; }
+
+    .results-content { padding: 27px 25px 20px; }
+    .results-header { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 19px; }
+    .section-heading.compact { align-items: center; }
+    .copy-all-button, .regenerate-button { white-space: nowrap; color: var(--primary); background: var(--primary-soft); border: 1px solid transparent; border-radius: 8px; font-size: 10px; font-weight: 800; }
+    .copy-all-button { padding: 8px 11px; }
+    .copy-all-button:hover, .regenerate-button:hover { border-color: #c9c3f4; }
+    .title-list { display: flex; flex-direction: column; gap: 7px; padding: 0; margin: 0; list-style: none; counter-reset: title; }
+    .title-item { counter-increment: title; display: grid; grid-template-columns: 26px minmax(0, 1fr) 32px; gap: 8px; align-items: center; min-height: 47px; padding: 6px 7px 6px 11px; background: #fcfcfe; border: 1px solid var(--border); border-radius: 9px; animation: reveal 0.3s both; }
+    .title-item::before { content: counter(title, decimal-leading-zero); color: #9894a4; font-size: 9px; font-weight: 800; }
+    .title-item:hover { background: #fff; border-color: #c8c2ef; }
+    .title-text { overflow-wrap: anywhere; font-size: 11px; font-weight: 700; line-height: 1.55; }
+    .item-copy { width: 32px; height: 32px; display: grid; place-items: center; padding: 0; color: #817d8e; background: transparent; border: 0; border-radius: 7px; font-size: 10px; font-weight: 800; }
+    .item-copy:hover { color: var(--primary); background: var(--primary-soft); }
+    .results-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 17px; padding-top: 15px; border-top: 1px solid var(--border); }
+    .results-footer p { margin: 0; color: #92909c; font-size: 9px; }
+    .regenerate-button { padding: 7px 10px; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 23px 0 58px; }
+    .features article { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 15px; }
+    .features article > span { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; color: var(--primary); background: var(--primary-soft); border-radius: 9px; font-size: 11px; font-weight: 900; }
+    .features h3 { margin: 0; font-size: 11px; }
+    .features p { margin: 1px 0 0; color: #8b8897; font-size: 9px; }
+    footer { padding: 25px 20px 30px; color: #8c8998; background: #fff; border-top: 1px solid var(--border); text-align: center; font-size: 10px; }
+    footer p { margin: 0; }
+    .copyright { margin-top: 3px; font-weight: 700; }
+    .toast { position: fixed; left: 50%; bottom: 25px; z-index: 10; display: flex; align-items: center; gap: 8px; max-width: calc(100% - 28px); padding: 10px 15px; color: #fff; background: #2e2b3b; border-radius: 9px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18); font-size: 11px; font-weight: 700; opacity: 0; transform: translate(-50%, 18px); pointer-events: none; transition: 0.22s; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .toast > span:first-child { color: #67d5a5; }
+
+    @media (max-width: 880px) {
+      .tool-layout { grid-template-columns: 1fr; }
+      .results-card, .results-empty { min-height: 460px; }
+    }
+    @media (max-width: 620px) {
+      .site-header, main { width: min(100% - 28px, 1120px); }
+      .site-header { min-height: 64px; }
+      .brand { font-size: 19px; }
+      .brand-mark { width: 33px; height: 33px; }
+      .local-badge { padding: 6px 9px; font-size: 10px; }
+      .hero { padding: 44px 4px 38px; }
+      .hero h1 { font-size: clamp(32px, 10vw, 42px); }
+      .hero-description { font-size: 13px; }
+      .desktop-only { display: none; }
+      .generator-card { padding: 23px 18px; }
+      .form-grid { grid-template-columns: 1fr; gap: 13px; }
+      .theme-field { margin-top: 13px; }
+      .tone-options { grid-template-columns: 1fr 1fr; }
+      .form-actions { flex-direction: column-reverse; }
+      .secondary-button, .primary-button { width: 100%; }
+      .results-content { padding: 23px 16px 18px; }
+      .results-header { align-items: flex-start; }
+      .section-heading.compact { align-items: flex-start; }
+      .title-item { grid-template-columns: 23px minmax(0, 1fr) 30px; }
+      .features { grid-template-columns: 1fr; gap: 0; margin-bottom: 36px; }
+      .features article { width: min(270px, 100%); justify-content: flex-start; margin-inline: auto; }
+    }
+    @media (max-width: 390px) {
+      .local-badge { font-size: 0; gap: 0; }
+      .local-badge span { display: block; }
+      .results-header { flex-direction: column; }
+      .copy-all-button { align-self: flex-end; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
 </head>
 <body>
   <header class="site-header">
@@ -68,7 +291,7 @@
             <div class="tone-options">
               <label class="tone-option"><input type="radio" name="tone" value="やさしい" checked><span><b aria-hidden="true">◌</b>やさしい</span></label>
               <label class="tone-option"><input type="radio" name="tone" value="専門的"><span><b aria-hidden="true">#</b>専門的</span></label>
-              <label class="tone-option"><input type="radio" name="tone" value="煽り気味"><span><b aria-hidden="true">!</b>インパクト</span></label>
+              <label class="tone-option"><input type="radio" name="tone" value="インパクト"><span><b aria-hidden="true">!</b>インパクト</span></label>
               <label class="tone-option"><input type="radio" name="tone" value="上品"><span><b aria-hidden="true">◇</b>上品</span></label>
             </div>
           </fieldset>
@@ -115,6 +338,262 @@
   <footer><p>あなたの発信が、もっと多くの人に届きますように。</p><p class="copyright">© <span id="current-year">2026</span> TitleCraft</p></footer>
   <div class="toast" id="toast" role="status" aria-live="polite"><span aria-hidden="true">✓</span><span id="toast-message">コピーしました</span></div>
 
-  <script src="./script.js" defer></script>
+  <script>
+    'use strict';
+
+    // defer 属性の有無や file:// での実行にかかわらず、DOM 構築完了後に初期化する。
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('title-form');
+      const genreInput = document.getElementById('genre');
+      const targetInput = document.getElementById('target');
+      const themeInput = document.getElementById('theme');
+      const themeCount = document.getElementById('theme-count');
+      const formErrorSummary = document.getElementById('form-error-summary');
+      const resultsEmpty = document.getElementById('results-empty');
+      const resultsContent = document.getElementById('results-content');
+      const resultsSection = document.getElementById('results-section');
+      const titleList = document.getElementById('title-list');
+      const copyAllButton = document.getElementById('copy-all-button');
+      const regenerateButton = document.getElementById('regenerate-button');
+      const sampleButton = document.getElementById('sample-button');
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      const resultCount = document.getElementById('result-count');
+      const currentYear = document.getElementById('current-year');
+
+      let currentTitles = [];
+      let toastTimer;
+      let patternOffset = 0;
+
+      currentYear.textContent = new Date().getFullYear();
+
+      const titlePatterns = {
+        'やさしい': [
+          ({ theme }) => `はじめての「${theme}」｜今日からできるやさしい入門ガイド`,
+          ({ target, theme }) => `${target}へ。無理なく始める${theme}のコツ`,
+          ({ genre, theme }) => `知識ゼロでも大丈夫！${genre}初心者のための${theme}`,
+          ({ theme }) => `${theme}で迷ったら読む記事｜基本から丁寧に解説`,
+          ({ target, genre }) => `${target}が知っておきたい、${genre}の小さな一歩`,
+          ({ theme }) => `焦らなくてOK。${theme}を自分のペースで続ける方法`,
+          ({ genre, target }) => `${genre}をもっと身近に｜${target}向けシンプルガイド`,
+          ({ theme }) => `やってみたら意外と簡単！${theme}の始め方`,
+          ({ target, theme }) => `${target}の悩みを解決する「${theme}」のヒント7選`,
+          ({ theme }) => `今日から少しずつ変わる。${theme}のやさしい習慣`
+        ],
+        '専門的': [
+          ({ theme }) => `${theme}を徹底解説｜成果につなげる実践フレームワーク`,
+          ({ genre, target }) => `${genre}の最新戦略：${target}が押さえるべき5つの要点`,
+          ({ theme }) => `データと事例で読み解く「${theme}」の成功法則`,
+          ({ target, theme }) => `${target}のための${theme}完全ガイド【保存版】`,
+          ({ genre, theme }) => `${genre}の専門家が解説する、${theme}の本質`,
+          ({ theme }) => `${theme}で成果を出すための設計・実践・改善プロセス`,
+          ({ target, theme }) => `${target}が陥りやすい${theme}の落とし穴と対策`,
+          ({ genre }) => `${genre}入門から応用まで｜体系的に学ぶロードマップ`,
+          ({ theme }) => `実務で使える${theme}｜再現性を高める7つのポイント`,
+          ({ genre, theme }) => `${genre}の常識を更新する「${theme}」実践論`
+        ],
+        'インパクト': [
+          ({ theme }) => `まだ知らないの？${theme}で差がつく決定的な理由`,
+          ({ target, theme }) => `${target}必見！今すぐ${theme}を始めるべき5つの理由`,
+          ({ genre }) => `知らないと損する${genre}の新常識【保存版】`,
+          ({ theme }) => `9割が間違えている「${theme}」の本当のやり方`,
+          ({ target, theme }) => `${target}の悩みが激変！${theme}の最強メソッド`,
+          ({ theme }) => `もう遠回りしない。${theme}で結果を出す最短ルート`,
+          ({ genre, theme }) => `${genre}初心者が${theme}で失敗するNG行動7選`,
+          ({ theme }) => `たった10分で変わる！${theme}の意外なコツ`,
+          ({ target }) => `${target}なら絶対に押さえたい、成功者だけが知る習慣`,
+          ({ theme }) => `保存必須！${theme}の答えをこの記事に全部まとめました`
+        ],
+        '上品': [
+          ({ theme }) => `暮らしを豊かにする、${theme}という選択`,
+          ({ genre, theme }) => `${genre}を愉しむための「${theme}」入門`,
+          ({ target, theme }) => `${target}に贈る、${theme}の美しい始め方`,
+          ({ theme }) => `丁寧に向き合う。${theme}で大切にしたいこと`,
+          ({ genre }) => `知性と品を感じる${genre}のたしなみ`,
+          ({ theme }) => `${theme}がもたらす、心地よい変化について`,
+          ({ target, genre }) => `${target}の毎日に寄り添う${genre}のヒント`,
+          ({ theme }) => `本質から考える「${theme}」｜洗練された実践法`,
+          ({ genre, theme }) => `${genre}のある暮らし。${theme}を無理なく続ける`,
+          ({ theme }) => `静かに差がつく、${theme}の上質な習慣`
+        ]
+      };
+
+      function cleanText(value) {
+        return value.trim().replace(/[。！？!?]+$/g, '');
+      }
+
+      function clearFieldError(input) {
+        input.classList.remove('invalid');
+        input.removeAttribute('aria-invalid');
+        document.getElementById(`${input.id}-error`).textContent = '';
+      }
+
+      function validateForm() {
+        const fields = [
+          { input: genreInput, name: 'ジャンル' },
+          { input: targetInput, name: '読者ターゲット' },
+          { input: themeInput, name: '記事テーマ' }
+        ];
+        const missingFields = [];
+
+        fields.forEach(({ input, name }) => {
+          const error = document.getElementById(`${input.id}-error`);
+          if (!cleanText(input.value)) {
+            input.classList.add('invalid');
+            input.setAttribute('aria-invalid', 'true');
+            error.textContent = `${name}を入力してください。`;
+            missingFields.push(name);
+          } else {
+            clearFieldError(input);
+          }
+        });
+
+        if (missingFields.length > 0) {
+          formErrorSummary.textContent = `入力が不足しています：${missingFields.join('、')}を入力してください。`;
+          formErrorSummary.hidden = false;
+          fields.find(({ input }) => input.classList.contains('invalid'))?.input.focus();
+          return false;
+        }
+
+        formErrorSummary.textContent = '';
+        formErrorSummary.hidden = true;
+        return true;
+      }
+
+      function getSelectedTone() {
+        return form.querySelector('input[name="tone"]:checked')?.value || 'やさしい';
+      }
+
+      function renderTitles() {
+        titleList.replaceChildren();
+
+        currentTitles.forEach((title, index) => {
+          const item = document.createElement('li');
+          item.className = 'title-item';
+          item.style.animationDelay = `${index * 35}ms`;
+
+          const text = document.createElement('span');
+          text.className = 'title-text';
+          text.textContent = title;
+
+          const copyButton = document.createElement('button');
+          copyButton.type = 'button';
+          copyButton.className = 'item-copy';
+          copyButton.setAttribute('aria-label', `タイトル案${index + 1}をコピー`);
+          copyButton.title = 'コピー';
+          copyButton.textContent = 'コピー';
+          copyButton.addEventListener('click', () => {
+            copyText(title, `タイトル案${index + 1}をコピーしました`);
+          });
+
+          item.append(text, copyButton);
+          titleList.appendChild(item);
+        });
+      }
+
+      function generateTitles() {
+        if (!validateForm()) return;
+
+        const data = {
+          genre: cleanText(genreInput.value),
+          target: cleanText(targetInput.value),
+          theme: cleanText(themeInput.value)
+        };
+        const tone = getSelectedTone();
+        const patterns = titlePatterns[tone] || titlePatterns['やさしい'];
+
+        patternOffset = currentTitles.length ? (patternOffset + 1) % patterns.length : 0;
+        currentTitles = Array.from({ length: 10 }, (_, index) => {
+          const pattern = patterns[(index + patternOffset) % patterns.length];
+          return pattern(data);
+        });
+
+        renderTitles();
+        resultCount.textContent = String(currentTitles.length);
+        resultsEmpty.hidden = true;
+        resultsContent.hidden = false;
+
+        if (window.innerWidth <= 850) {
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+
+      function fallbackCopy(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.setAttribute('readonly', '');
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        textArea.setSelectionRange(0, text.length);
+        const copied = document.execCommand('copy');
+        textArea.remove();
+        if (!copied) throw new Error('Copy command failed');
+      }
+
+      async function copyText(text, message) {
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            fallbackCopy(text);
+          }
+          showToast(message);
+        } catch (error) {
+          showToast('コピーできませんでした。タイトルを選択してコピーしてください。');
+        }
+      }
+
+      function showToast(message) {
+        clearTimeout(toastTimer);
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+      }
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        generateTitles();
+      });
+
+      [genreInput, targetInput, themeInput].forEach((input) => {
+        input.addEventListener('input', () => {
+          clearFieldError(input);
+          if (!form.querySelector('.invalid')) {
+            formErrorSummary.textContent = '';
+            formErrorSummary.hidden = true;
+          }
+        });
+      });
+
+      themeInput.addEventListener('input', () => {
+        themeCount.textContent = String(themeInput.value.length);
+      });
+
+      sampleButton.addEventListener('click', () => {
+        genreInput.value = '副業、料理、子育て';
+        targetInput.value = '副業を始めたい会社員';
+        themeInput.value = '未経験からWebライターで月5万円を稼ぐ方法';
+        themeCount.textContent = String(themeInput.value.length);
+        form.querySelector('input[name="tone"][value="やさしい"]').checked = true;
+        [genreInput, targetInput, themeInput].forEach(clearFieldError);
+        formErrorSummary.textContent = '';
+        formErrorSummary.hidden = true;
+        showToast('入力例をセットしました');
+      });
+
+      copyAllButton.addEventListener('click', () => {
+        if (currentTitles.length !== 10) {
+          showToast('先にタイトル案を作成してください。');
+          return;
+        }
+        const allTitles = currentTitles.map((title, index) => `${index + 1}. ${title}`).join('\n');
+        copyText(allTitles, 'タイトル案10個をコピーしました');
+      });
+
+      regenerateButton.addEventListener('click', generateTitles);
+    });
+  </script>
 </body>
 </html>
