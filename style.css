@@ -113,6 +113,10 @@ textarea { min-height: 86px; padding: 11px 55px 22px 13px; resize: vertical; }
 input::placeholder, textarea::placeholder { color: #aaa7b4; }
 input:hover, textarea:hover { border-color: #c8c3da; }
 input:focus, textarea:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91, 74, 232, 0.09); outline: none; }
+[hidden] { display: none !important; }
+
+.form-error-summary { margin-bottom: 14px; padding: 10px 12px; color: var(--danger); background: #fff4f4; border: 1px solid #f1b8b8; border-radius: 8px; font-size: 12px; font-weight: 700; }
+
 input.invalid, textarea.invalid { border-color: var(--danger); }
 .theme-field { margin-top: 17px; }
 .textarea-wrap { position: relative; }
